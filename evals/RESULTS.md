@@ -7,7 +7,7 @@ Two made-up briefs, each built once with the skill and once without it (a fresh 
 | 1 | Ferryline: hero plus ledger | 20 / 20 | 17 / 20 | 126k / 95k | 405 s / 282 s |
 | 2 | Tern: the whole page | 23 / 23 | 18 / 23 | 128k / 137k | 269 s / 511 s |
 
-Side-by-side hero screenshots: `evals/results/iteration-1-hero-comparison.png`, `evals/results/iteration-2-hero-comparison.png`.
+Side-by-side hero screenshots: `docs/img/compare-ferryline.png`, `docs/img/compare-tern.png`.
 
 ## What the numbers say
 - **Fidelity to the design system and to the honesty rules is the skill's clear gain.** Without it, runs invented their own section names, used a gradient or blur, a saturated cyan or an orange where the house uses a muted steel-blue and amber, no start-frame step in the asset prompts, and (brief 2) no cost-approval step.
