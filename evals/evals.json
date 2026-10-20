@@ -1,0 +1,17 @@
+{
+  "skill_name": "field-report-landing",
+  "evals": [
+    {
+      "id": 0,
+      "name": "ferryline-case-study",
+      "prompt": "Use the brief in evals/files/ferryline-brief.md. I want a forward-deployed-engineer case study landing page for this hackathon project: dark, Palantir-grade, hairline isometric linework, an exploded layer-stack hero, honest about what was and was not measured. In the output folder write: (1) direction-contract.md; (2) tokens.css; (3) page.html, a self-contained HTML/CSS/SVG page with the first viewport (hero) and a results ledger section that prints the proof rows and the misses, no external assets; (4) data/results.ts holding every number printed on the page with its source; (5) asset-prompts.md with the prompts you would use to generate the hero still and clip (do NOT call any generation tool and do not spend anything); (6) report.md saying what you built, what you did not verify, and which decisions you want me to make. Do not deploy.",
+      "expected_output": "A contract, tokens, a self-contained dark page, a sourced data file, generation prompts, and an honest report, in one restrained design world."
+    },
+    {
+      "id": 1,
+      "name": "tern-full-page",
+      "prompt": "Use the brief in evals/files/tern-brief.md. I want a forward-deployed-engineer case study landing page for this hackathon project: dark, Palantir-grade, hairline isometric linework, an exploded layer-stack hero, honest about what was and was not measured. Build the whole page, not just the hero: hero, problem and response, capabilities, platform, results ledger with the misses, and the close. In the output folder write: (1) direction-contract.md; (2) tokens.css; (3) page.html, a self-contained HTML/CSS/SVG page with all of those sections, no external assets; (4) data/results.ts (or results.json) holding every number printed on the page with its source; (5) asset-prompts.md with the prompts you would use to generate the hero still and clip (do NOT call any generation tool and do not spend anything); (6) report.md saying what you built, what you did not verify, and which decisions you want me to make. Do not deploy.",
+      "expected_output": "A complete dark page in one restrained design world, sourced numbers, sample figures labelled as sample, no derived numbers, misses shown."
+    }
+  ]
+}

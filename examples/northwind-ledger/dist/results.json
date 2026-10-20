@@ -1,0 +1,35 @@
+{
+  "run": "Example run, 2026-01-01",
+  "rows": [
+    {
+      "id": "R1",
+      "label": "Median time to a drafted decision",
+      "value": "12 s",
+      "caption": "Over the scenario set.",
+      "source": "example-run-01",
+      "as_of": "2026-01-01",
+      "tag": "SAMPLE"
+    },
+    {
+      "id": "R2",
+      "label": "Decisions matched to their evidence",
+      "value": "90%",
+      "pct": 90,
+      "caption": "Sampled decisions.",
+      "source": "example-run-01",
+      "as_of": "2026-01-01",
+      "tag": "SAMPLE"
+    }
+  ],
+  "misses": [
+    {
+      "id": "M1",
+      "label": "Live pilot with a co-op",
+      "value": "None yet",
+      "caption": "No real members have used it.",
+      "source": "-",
+      "as_of": "-",
+      "tag": "NOT MEASURED"
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+/* Field Report tokens. Scope everything under one root class so the page cannot leak into an app.
+   Rename `.fde` to the project's own root class if you like; keep the variables. */
+
+html:has(.fde) {
+  color-scheme: dark;
+  scrollbar-color: #343a42 #0e1116;
+  scroll-behavior: smooth;
+}
+html:has(.fde) body {
+  background: #0e1116;
+}
+
+.fde {
+  --ground: #0e1116;
+  --ink: #ecebe6;
+  --ink-2: rgb(236 235 230 / 0.68);
+  --ink-3: rgb(236 235 230 / 0.34);
+  --rule: rgb(236 235 230 / 0.16);
+  --sig: #9db7cf; /* the one signal colour: signal path and active layer only */
+  --warn: #d6a15f; /* the one state colour: missed, unmeasured or at-risk only */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --pad: clamp(20px, 3.4vw, 56px);
+  --nav-h: 64px;
+  /* Type: set --fde-sans and --fde-mono from your font loader; these stacks are the fallback, so type never drops to a serif. */
+  --fde-sans: "Schibsted Grotesk", "Inter", "Helvetica Neue", system-ui, -apple-system, sans-serif;
+  --fde-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--fde-sans), system-ui, sans-serif; /* set --fde-sans from the font loader */
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  overflow-x: clip;
+}
+.fde ::selection {
+  background: var(--sig);
+  color: var(--ground);
+}
+.fde :focus-visible {
+  outline: 1px solid var(--sig);
+  outline-offset: 4px;
+}
+.fde a {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+}
+.fde-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.fde-display {
+  font-weight: 400;
+  font-size: clamp(2.5rem, 4.2vw, 4.5rem);
+  letter-spacing: -0.025em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+.fde-h2 {
+  font-weight: 400;
+  font-size: clamp(1.7rem, 3vw, 2.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  max-width: 24ch;
+}
+.fde-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.fde-mono {
+  font-family: var(--fde-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+.fde-tag {
+  font-family: var(--fde-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  border: 1px solid var(--rule);
+  padding: 1px 6px;
+  color: var(--ink-2);
+}
+.fde-tag[data-gap] {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+.fde-rule {
+  border: 0;
+  border-top: 1px solid var(--rule);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fde *,
+  .fde *::before,
+  .fde *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

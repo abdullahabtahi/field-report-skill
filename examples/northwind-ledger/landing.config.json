@@ -1,0 +1,129 @@
+{
+  "project": "Northwind Ledger",
+  "event": "Example Hackathon",
+  "link": "#",
+  "link_label": "Open the live prototype",
+  "crumbs": [
+    "Case study",
+    "Example Hackathon",
+    "Northwind Ledger"
+  ],
+  "kicker": "Field report: an audit trail for a farm-credit co-op",
+  "headline": "Every loan decision, traceable to its evidence.",
+  "lede": "A copilot proposes a credit decision with the evidence beside it; an officer approves; the ledger remembers. The diagram reads bottom to top; the ledger below lists the figures, their sources, and what has not been measured.",
+  "data_statement": "The co-op and its members are fictional. The loan records are synthetic; the rainfall series is real public data. This is a hackathon prototype, not a production system.",
+  "layers": [
+    {
+      "label": "Records",
+      "items": [
+        "Synthetic loan records",
+        "Rainfall and prices"
+      ],
+      "tag": "REAL DATA"
+    },
+    {
+      "label": "Checks",
+      "items": [
+        "Every record validated on entry"
+      ]
+    },
+    {
+      "label": "Model",
+      "items": [
+        "Members, farms, loans, one meaning"
+      ]
+    },
+    {
+      "label": "Assistant",
+      "items": [
+        "Proposes; cites every figure"
+      ]
+    },
+    {
+      "label": "Officer",
+      "items": [
+        "A person approves",
+        "Each approval is recorded"
+      ],
+      "tag": "BY DESIGN"
+    }
+  ],
+  "problem": {
+    "title": "Decisions nobody could explain",
+    "body": "Credit decisions lived in spreadsheets and phone calls. When a loan was questioned months later, nobody could say what the officer had seen."
+  },
+  "response": {
+    "title": "A copilot that shows its evidence",
+    "body": "The assistant proposes a decision and lists the records behind each figure. An officer decides. The decision and its evidence are stored together."
+  },
+  "capabilities": [
+    {
+      "title": "Evidence beside every figure",
+      "body": "Each number in an answer links to the record and rule that produced it.",
+      "source": "Prototype run, example scenario set"
+    },
+    {
+      "title": "A second pair of eyes",
+      "body": "Large loans need two officers; the assistant has no approve action.",
+      "source": "Prototype design"
+    }
+  ],
+  "platform": {
+    "title": "How it runs",
+    "intro": "The services that carry each step, strongest first.",
+    "services": [
+      {
+        "name": "Service A",
+        "does": "Stores and queries the records",
+        "first": true
+      },
+      {
+        "name": "Service B",
+        "does": "Hosts the assistant"
+      }
+    ]
+  },
+  "results": {
+    "run": "Example run, 2026-01-01",
+    "rows": [
+      {
+        "id": "R1",
+        "label": "Median time to a drafted decision",
+        "value": "12 s",
+        "caption": "Over the scenario set.",
+        "source": "example-run-01",
+        "as_of": "2026-01-01",
+        "tag": "SAMPLE"
+      },
+      {
+        "id": "R2",
+        "label": "Decisions matched to their evidence",
+        "value": "90%",
+        "pct": 90,
+        "caption": "Sampled decisions.",
+        "source": "example-run-01",
+        "as_of": "2026-01-01",
+        "tag": "SAMPLE"
+      }
+    ]
+  },
+  "misses": [
+    {
+      "id": "M1",
+      "label": "Live pilot with a co-op",
+      "value": "None yet",
+      "caption": "No real members have used it.",
+      "source": "-",
+      "as_of": "-",
+      "tag": "NOT MEASURED"
+    }
+  ],
+  "close": {
+    "title": "See it work",
+    "cta_label": "Open the live prototype",
+    "credit": "Built for Example Hackathon"
+  },
+  "words": {
+    "banned": []
+  }
+}

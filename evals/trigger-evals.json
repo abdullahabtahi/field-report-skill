@@ -1,0 +1,22 @@
+[
+  {"query": "ok so i just finished my 2nd hackathon project (a claims-triage agent on google cloud) and want to turn it into one of those forward deployed engineer case study pages, dark, palantir-ish, same vibe as the one i made for my last project. where do we start", "should_trigger": true},
+  {"query": "build me a landing page for my hackathon submission that looks like palantir foundry docs meets an engineering report. near-black, thin isometric linework, one blue accent. repo is at ~/code/tern-web, next.js", "should_trigger": true},
+  {"query": "i want a scroll-driven hero where an exploded stack of layers rotates as you scroll. i have a magnific mcp connected. how do i generate the frames and wire them to a canvas", "should_trigger": true},
+  {"query": "make a case study page for our devpost project. honest about what we measured and what we didn't. include a results table and the misses. dark theme, no cards, no gradients", "should_trigger": true},
+  {"query": "reuse the same design system as my EIOS landing for the new hackathon repo. colors, type, the isometric stack hero, all of it", "should_trigger": true},
+  {"query": "need a quantumblack-style microsite for our ml project, hairline diagrams, mono numbers, an architecture figure showing which gcp services do what", "should_trigger": true},
+  {"query": "can you cut a graded set of webp frames from this seedance clip (orbit.mp4) for a scroll sequence? i want the glow gone and the blue kept", "should_trigger": true},
+  {"query": "our hackathon judges will only look at the page for 2 minutes. design a forward-deployed-engineer style writeup page that proves the build is real", "should_trigger": true},
+  {"query": "set up the landing page for the project with the dark isometric look from before, the config-driven one, and run the honesty checks on the copy", "should_trigger": true},
+  {"query": "add a results ledger section with misses in amber to my existing dark landing page, same house style", "should_trigger": true},
+  {"query": "design the login screen and the main dashboard for our compliance analysts, dense tables, keyboard shortcuts, light theme", "should_trigger": false},
+  {"query": "make me a bright, friendly SaaS homepage with a big hero, three metric tiles, pricing cards and a testimonial carousel", "should_trigger": false},
+  {"query": "turn these notes into a 10-slide pitch deck for the hackathon final, investor tone, with a problem slide and a cost slide", "should_trigger": false},
+  {"query": "create a logo and brand guide for my startup, minimal, monochrome, with a wordmark and an icon", "should_trigger": false},
+  {"query": "fix the lighthouse performance score on my next.js landing page; LCP is 4s and the hero image is huge", "should_trigger": false},
+  {"query": "write the README for my hackathon repo: what it does, how to run it, architecture diagram in mermaid", "should_trigger": false},
+  {"query": "generate a 3 minute demo video script and voiceover for the submission, abstract graphics intro then a screen recording", "should_trigger": false},
+  {"query": "add dark mode to my existing react admin panel, it currently only has a light theme and uses tailwind", "should_trigger": false},
+  {"query": "build an animated svg diagram of our microservices for the docs site, readable by non-technical people", "should_trigger": false},
+  {"query": "write a blog post about what we learned building an agent in a weekend hackathon, with a section on mistakes", "should_trigger": false}
+]

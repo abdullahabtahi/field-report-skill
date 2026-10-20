@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Northwind Ledger: Example Hackathon</title>
+<style>/* Field Report tokens. Scope everything under one root class so the page cannot leak into an app.
+   Rename `.fde` to the project's own root class if you like; keep the variables. */
+
+html:has(.fde) {
+  color-scheme: dark;
+  scrollbar-color: #343a42 #0e1116;
+  scroll-behavior: smooth;
+}
+html:has(.fde) body {
+  background: #0e1116;
+}
+
+.fde {
+  --ground: #0e1116;
+  --ink: #ecebe6;
+  --ink-2: rgb(236 235 230 / 0.68);
+  --ink-3: rgb(236 235 230 / 0.34);
+  --rule: rgb(236 235 230 / 0.16);
+  --sig: #9db7cf; /* the one signal colour: signal path and active layer only */
+  --warn: #d6a15f; /* the one state colour: missed, unmeasured or at-risk only */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --pad: clamp(20px, 3.4vw, 56px);
+  --nav-h: 64px;
+  /* Type: set --fde-sans and --fde-mono from your font loader; these stacks are the fallback, so type never drops to a serif. */
+  --fde-sans: "Schibsted Grotesk", "Inter", "Helvetica Neue", system-ui, -apple-system, sans-serif;
+  --fde-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--fde-sans), system-ui, sans-serif; /* set --fde-sans from the font loader */
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  overflow-x: clip;
+}
+.fde ::selection {
+  background: var(--sig);
+  color: var(--ground);
+}
+.fde :focus-visible {
+  outline: 1px solid var(--sig);
+  outline-offset: 4px;
+}
+.fde a {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+}
+.fde-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.fde-display {
+  font-weight: 400;
+  font-size: clamp(2.5rem, 4.2vw, 4.5rem);
+  letter-spacing: -0.025em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+.fde-h2 {
+  font-weight: 400;
+  font-size: clamp(1.7rem, 3vw, 2.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  max-width: 24ch;
+}
+.fde-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.fde-mono {
+  font-family: var(--fde-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+.fde-tag {
+  font-family: var(--fde-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  border: 1px solid var(--rule);
+  padding: 1px 6px;
+  color: var(--ink-2);
+}
+.fde-tag[data-gap] {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+.fde-rule {
+  border: 0;
+  border-top: 1px solid var(--rule);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fde *,
+  .fde *::before,
+  .fde *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+*{box-sizing:border-box}body{margin:0}
+.skip{position:absolute;left:-999px}.skip:focus{left:var(--pad);top:8px;background:var(--ink);color:var(--ground);padding:6px 10px;z-index:9}
+.fde-nav{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:0 var(--pad);height:var(--nav-h);border-bottom:1px solid var(--rule)}
+.fde-crumbs{display:flex;gap:10px;flex-wrap:wrap;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+.fde-crumbs span+span::before{content:"/";margin-right:10px;color:var(--ink-2)}.fde-crumbs span:last-child{color:var(--ink)}
+.fde-cta{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--ink-3);padding-bottom:2px;white-space:nowrap}
+.fde-hero{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(16px,3vw,56px);padding:clamp(32px,6vh,72px) var(--pad) 48px;min-height:calc(100vh - var(--nav-h));align-items:center}
+.fde-kicker{margin:0 0 24px}.fde-display{margin:0 0 24px;max-width:14ch}
+.fde-lede{color:var(--ink-2);max-width:46ch;margin:0 0 32px}
+.fde-cue{display:inline-block;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;border-left:1px solid var(--ink-3);padding-left:12px;margin-bottom:24px}
+.fde-data{color:var(--ink-2);font-size:.82rem;max-width:52ch;border-left:1px solid var(--rule);padding-left:12px;margin:0}
+.fde-art-wrap svg{width:100%;height:auto;display:block;overflow:visible}.fde-art-wrap .m{display:none}
+.fde-legend-list{display:none;list-style:none;margin:16px 0 0;padding:0}
+.fde-legend-list li{border-left:1px solid var(--rule);padding:6px 0 6px 12px;margin-bottom:8px}.fde-legend-list b{font-weight:500;letter-spacing:.14em;text-transform:uppercase;font-size:.78rem}
+.fde-legend-list .n{font-family:var(--fde-mono),ui-monospace,monospace;color:var(--ink-2);margin-right:8px;font-size:.78rem}.fde-legend-list span{display:block;color:var(--ink-2);font-size:.9rem}
+.fde-sec{padding:clamp(48px,9vh,112px) var(--pad);border-top:1px solid var(--rule)}
+.fde-two{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,96px)}
+.fde-two h3,.fde-frame h3{font-weight:400;font-size:1.35rem;letter-spacing:-.01em;margin:10px 0 12px}.fde-two p{color:var(--ink-2);max-width:48ch;margin:0}
+.fde-frames{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:24px;margin-top:32px}
+.fde-frame{border:1px solid var(--rule);margin:0}.fde-bar{display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--rule)}
+.fde-frame .body{padding:20px 16px}.fde-frame p{color:var(--ink-2);margin:0}.fde-frame figcaption{padding:10px 16px;border-top:1px solid var(--rule);font-size:.78rem;color:var(--ink-2)}
+.fde-svc{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:12px 24px}
+.fde-svc li{border-left:1px solid var(--rule);padding:4px 0 4px 14px}.fde-svc li[data-first]{border-left-color:var(--sig)}.fde-svc b{display:block;font-weight:500}.fde-svc span{color:var(--ink-2);font-size:.9rem}
+.fde-run{margin:12px 0 28px;color:var(--ink-2);font-size:.85rem}
+.fde-ledger{width:100%;border-collapse:collapse}.fde-ledger th{font-weight:400;text-align:left;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);padding:0 12px 10px 0}
+.fde-ledger td{padding:18px 12px 18px 0;border-top:1px solid var(--rule);vertical-align:top}
+.fde-ledger .id{width:48px;color:var(--ink-2)}.fde-ledger .val{font-size:clamp(1.6rem,2.6vw,2.4rem);letter-spacing:-.02em;white-space:nowrap}
+.fde-ledger .lbl{max-width:34ch}.fde-ledger .cap{display:block;color:var(--ink-2);font-size:.85rem;margin-top:4px}
+.fde-ledger .src{font-size:.75rem;color:var(--ink-2)}.fde-track{height:3px;background:var(--rule);margin-top:10px;position:relative}.fde-track i{position:absolute;left:0;top:0;bottom:0;background:var(--ink)}
+.fde-ledger tr.gap .val{color:var(--warn)}.fde-ledger tr.gap .fde-track i{background:var(--warn)}
+.fde-ledger .grp th{padding:36px 0 10px;color:var(--warn);border-top:1px solid var(--rule)}.fde-miss-h{color:var(--warn)}.fde-sample{color:var(--ink-2);font-size:.8rem;margin:0 0 16px}
+.fde-close{text-align:left}.fde-close h2{margin:0 0 24px}.fde-close .credit{color:var(--ink-2);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;margin-top:32px}
+.fde-foot{display:flex;justify-content:space-between;gap:16px;padding:24px var(--pad);border-top:1px solid var(--rule);font-size:.78rem;color:var(--ink-2)}
+@media (max-width:600px){.fde-crumbs span:not(:nth-last-child(-n+2)){display:none}.fde-crumbs span:nth-last-child(2)::before{content:none}.fde-foot{flex-direction:column}.fde-nav{height:auto;flex-wrap:wrap;padding:14px var(--pad);row-gap:10px}}
+@media (max-width:900px){.fde-hero{grid-template-columns:1fr;min-height:0}.fde-two{grid-template-columns:1fr}
+.fde-art-wrap .d{display:none}.fde-art-wrap .m{display:block;max-width:420px}.fde-legend-list{display:block}
+.fde-ledger thead{display:none}.fde-ledger,.fde-ledger tbody,.fde-ledger tr,.fde-ledger td,.fde-ledger .grp th{display:block}.fde-ledger td{border:0;padding:4px 0}.fde-ledger tr{border-top:1px solid var(--rule);padding:16px 0}.fde-ledger .id{width:auto}}</style></head>
+<body><div class="fde"><a class="skip" href="#case">Skip to the case study</a>
+<header class="fde-nav"><nav class="fde-crumbs" aria-label="Breadcrumb"><span>Case study</span><span>Example Hackathon</span><span>Northwind Ledger</span></nav><a class="fde-cta" href="#">Open the live prototype</a></header>
+<main>
+<section class="fde-hero" aria-labelledby="h">
+<div><p class="fde-label fde-kicker">Field report: an audit trail for a farm-credit co-op</p><h1 id="h" class="fde-display">Every loan decision, traceable to its evidence.</h1><p class="fde-lede">A copilot proposes a credit decision with the evidence beside it; an officer approves; the ledger remembers. The diagram reads bottom to top; the ledger below lists the figures, their sources, and what has not been measured.</p>
+<a class="fde-cue" href="#case">Read the case study</a><p class="fde-data">The co-op and its members are fictional. The loan records are synthetic; the rainfall series is real public data. This is a hackathon prototype, not a production system.</p></div>
+<div class="fde-art-wrap"><div class="d"><svg xmlns="http://www.w3.org/2000/svg" class="stack" viewBox="0 0 1180 840" role="img" aria-labelledby="sd-t sd-d"><title id="sd-t">Exploded isometric diagram of the Northwind Ledger layers, bottom to top, with a signal rising through them.</title><desc id="sd-d">Exploded isometric diagram of the Northwind Ledger layers, bottom to top, with a signal rising through them.</desc><style>.layer{--stroke:var(--ink,#ecebe6);--soft:rgba(236,235,230,.62);--sigc:var(--sig,#9db7cf);animation:rise 1s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--i)*130ms)}
+.slab{fill:var(--ground,#0e1116);stroke:var(--stroke);stroke-width:1.2;stroke-linejoin:round;stroke-dasharray:1;animation:draw 1.4s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--i)*130ms)}
+.edge{fill:none;stroke:var(--stroke);stroke-width:1.2;stroke-linejoin:round}
+.line{fill:none;stroke:var(--soft);stroke-width:1;vector-effect:non-scaling-stroke}.fine{stroke-width:.6}.dash{stroke-dasharray:3 4}
+.signal{stroke:var(--sigc);stroke-width:1.6}
+.solid{fill:var(--ground,#0e1116);stroke:var(--stroke);stroke-width:1;stroke-linejoin:round}
+.fill-sig{fill:var(--sigc);stroke:none}.fill-ink{fill:var(--stroke);stroke:none}
+.node{fill:var(--ground,#0e1116);stroke:var(--stroke);vector-effect:non-scaling-stroke}
+.hub{fill:none;stroke:var(--sigc);stroke-dasharray:3 3;vector-effect:non-scaling-stroke}
+.art{animation:fade 1.2s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--i)*130ms + 500ms)}
+.leader{fill:none;stroke:var(--ink-3,rgba(236,235,230,.34));stroke-width:1;stroke-dasharray:2 4}
+.arrow-line,.arrow-run{fill:none;stroke-width:2.4;stroke-linecap:round}
+.arrow-line{stroke:rgba(157,183,207,.55);stroke-dasharray:1;animation:draw 2s cubic-bezier(.16,1,.3,1) .4s both}
+.arrow-head{fill:none;stroke:var(--sig,#9db7cf);stroke-width:2.4;stroke-linecap:round;animation:fade .6s ease 2s both}
+.arrow-run{stroke:var(--ink,#ecebe6);stroke-dasharray:.05 .95;animation:run 5.5s linear 2.4s infinite}
+.br{fill:none;stroke:var(--ink-3,rgba(236,235,230,.34));stroke-width:1}
+.num{font:500 13px ui-monospace,Menlo,monospace;fill:var(--ink-2,rgba(236,235,230,.68));letter-spacing:.06em}
+.lab{font:500 14px var(--fde-sans,system-ui,sans-serif);fill:var(--ink,#ecebe6);letter-spacing:.14em}
+.itm{font:400 15px var(--fde-sans,system-ui,sans-serif);fill:var(--ink-2,rgba(236,235,230,.68))}
+.tag{fill:none;stroke:var(--rule,rgba(236,235,230,.4));stroke-width:1}
+.tagt{font:500 11px ui-monospace,Menlo,monospace;fill:var(--ink-2,rgba(236,235,230,.68));letter-spacing:.08em}
+@keyframes rise{from{opacity:0;transform:translateY(-22px)}}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes fade{from{opacity:0}}
+@keyframes run{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@media (prefers-reduced-motion:reduce){.layer,.slab,.art,.arrow-line,.arrow-head,.arrow-run{animation:none!important}.arrow-run{display:none}}</style><g class="layer" style="--i:0"><path d="M150 700L150 709L380 824L610 709L610 700M380 815L380 824" class="edge"/><path d="M380 585L610 700L380 815L150 700Z" class="slab" pathLength="1"/><path d="M618 700L698 700" class="leader" aria-hidden="true"/><g class="art"><path d="M366.2 612.6L377.5 619.1L377.5 632.1L366.2 638.6L354.9 632.1L354.9 619.1ZM354.9 619.1L366.2 625.6L377.5 619.1M366.2 625.6L366.2 638.6" class="solid"/><path d="M419.7 640.4A8.6 4.2 0 1 0 436.9 640.4A8.6 4.2 0 1 0 419.7 640.4ZM419.7 640.4L419.7 656.9A8.6 4.2 0 0 0 436.9 656.9L436.9 640.4" class="solid"/><path d="M302.4 646.1A8.6 4.2 0 1 0 319.6 646.1A8.6 4.2 0 1 0 302.4 646.1ZM302.4 646.1L302.4 662.6A8.6 4.2 0 0 0 319.6 662.6L319.6 646.1" class="solid"/><path d="M366.2 661.6L374.9 666.6L374.9 676.6L366.2 681.6L357.5 676.6L357.5 666.6ZM357.5 666.6L366.2 671.6L374.9 666.6M366.2 671.6L366.2 681.6" class="solid"/><path d="M476.6 663.9L485.3 668.9L485.3 678.9L476.6 683.9L467.9 678.9L467.9 668.9ZM467.9 668.9L476.6 673.9L485.3 668.9M476.6 673.9L476.6 683.9" class="solid"/><path d="M274.2 675.4L282.9 680.4L282.9 690.4L274.2 695.4L265.5 690.4L265.5 680.4ZM265.5 680.4L274.2 685.4L282.9 680.4M274.2 685.4L274.2 695.4" class="solid"/><path d="M409.9 689.6L421.2 696.1L421.2 709.1L409.9 715.6L398.6 709.1L398.6 696.1ZM398.6 696.1L409.9 702.6L421.2 696.1M409.9 702.6L409.9 715.6" class="solid"/><path d="M334 693.1L345.3 699.6L345.3 712.6L334 719.1L322.7 712.6L322.7 699.6ZM322.7 699.6L334 706.1L345.3 699.6M334 706.1L334 719.1" class="solid"/><path d="M490.4 697.7L501.7 704.2L501.7 717.2L490.4 723.7L479.1 717.2L479.1 704.2ZM479.1 704.2L490.4 710.7L501.7 704.2M490.4 710.7L490.4 723.7" class="solid"/><path d="M304.1 718L312.8 723L312.8 733L304.1 738L295.4 733L295.4 723ZM295.4 723L304.1 728L312.8 723M304.1 728L304.1 738" class="solid"/><path d="M417.4 735.8A8.6 4.2 0 1 0 434.6 735.8A8.6 4.2 0 1 0 417.4 735.8ZM417.4 735.8L417.4 752.3A8.6 4.2 0 0 0 434.6 752.3L434.6 735.8" class="solid"/><path d="M357.6 738.1A8.6 4.2 0 1 0 374.8 738.1A8.6 4.2 0 1 0 357.6 738.1ZM357.6 738.1L357.6 754.6A8.6 4.2 0 0 0 374.8 754.6L374.8 738.1" class="solid"/></g></g><g class="layer" style="--i:1"><path d="M150 565L150 574L380 689L610 574L610 565M380 680L380 689" class="edge"/><path d="M380 450L610 565L380 680L150 565Z" class="slab" pathLength="1"/><path d="M618 565L698 565" class="leader" aria-hidden="true"/><g transform="matrix(115 57.5 -115 57.5 380 565)" class="art"><path d="M-1.000 -1L-1.000 1M-1 -1.000L1 -1.000M-0.857 -1L-0.857 1M-1 -0.857L1 -0.857M-0.714 -1L-0.714 1M-1 -0.714L1 -0.714M-0.571 -1L-0.571 1M-1 -0.571L1 -0.571M-0.429 -1L-0.429 1M-1 -0.429L1 -0.429M-0.286 -1L-0.286 1M-1 -0.286L1 -0.286M-0.143 -1L-0.143 1M-1 -0.143L1 -0.143M0.000 -1L0.000 1M-1 0.000L1 0.000M0.143 -1L0.143 1M-1 0.143L1 0.143M0.286 -1L0.286 1M-1 0.286L1 0.286M0.429 -1L0.429 1M-1 0.429L1 0.429M0.571 -1L0.571 1M-1 0.571L1 0.571M0.714 -1L0.714 1M-1 0.714L1 0.714M0.857 -1L0.857 1M-1 0.857L1 0.857M1.000 -1L1.000 1M-1 1.000L1 1.000" class="line fine"/><rect x="-0.571" y="-0.286" width="0.143" height="0.143" class="fill-sig"/><rect x="-0.429" y="-0.286" width="0.143" height="0.143" class="fill-sig"/><rect x="-0.429" y="-0.143" width="0.143" height="0.143" class="fill-sig"/><rect x="-0.286" y="0.000" width="0.143" height="0.143" class="fill-sig"/><rect x="-0.143" y="0.000" width="0.143" height="0.143" class="fill-sig"/><rect x="-0.143" y="0.143" width="0.143" height="0.143" class="fill-sig"/><rect x="0.000" y="0.286" width="0.143" height="0.143" class="fill-sig"/><rect x="0.143" y="0.286" width="0.143" height="0.143" class="fill-sig"/><rect x="0.429" y="-0.571" width="0.143" height="0.143" class="line dash"/><path d="M-1 0.12L1 0.12" class="line dash"/></g></g><g class="layer" style="--i:2"><path d="M150 430L150 439L380 554L610 439L610 430M380 545L380 554" class="edge"/><path d="M380 315L610 430L380 545L150 430Z" class="slab" pathLength="1"/><path d="M618 430L698 430" class="leader" aria-hidden="true"/><g transform="matrix(115 57.5 -115 57.5 380 430)" class="art"><path d="M-0.7 -0.35L-0.35 -0.7" class="line"/><path d="M-0.7 -0.35L-0.4 0.1" class="line"/><path d="M-0.35 -0.7L0.05 -0.3" class="line"/><path d="M-0.4 0.1L0.05 -0.3" class="line"/><path d="M0.05 -0.3L0.1 0.45" class="line"/><path d="M0.05 -0.3L0.5 -0.1" class="line"/><path d="M0.1 0.45L0.62 0.55" class="line"/><path d="M0.5 -0.1L0.62 0.55" class="line"/><path d="M-0.4 0.1L-0.15 0.7" class="line"/><path d="M0.1 0.45L-0.15 0.7" class="line"/><path d="M0.5 -0.1L0.55 -0.62" class="line"/><path d="M-0.35 -0.7L0.55 -0.62" class="line"/><circle cx="-0.7" cy="-0.35" r="0.07" class="node"/><circle cx="-0.35" cy="-0.7" r="0.07" class="node"/><circle cx="-0.4" cy="0.1" r="0.07" class="node"/><circle cx="0.05" cy="-0.3" r="0.13" class="hub"/><circle cx="0.1" cy="0.45" r="0.07" class="node"/><circle cx="0.5" cy="-0.1" r="0.07" class="node"/><circle cx="0.62" cy="0.55" r="0.07" class="node"/><circle cx="-0.15" cy="0.7" r="0.07" class="node"/><circle cx="0.55" cy="-0.62" r="0.07" class="node"/></g></g><g class="layer" style="--i:3"><path d="M150 295L150 304L380 419L610 304L610 295M380 410L380 419" class="edge"/><path d="M380 180L610 295L380 410L150 295Z" class="slab" pathLength="1"/><path d="M618 295L698 295" class="leader" aria-hidden="true"/><g transform="matrix(115 57.5 -115 57.5 380 295)" class="art"><rect x="-0.85" y="-0.80" width="0.5" height="0.1" class="line"/><rect x="-0.28" y="-0.80" width="0.40" height="0.1" class="line"/><rect x="0.62" y="-0.80" width="0.22" height="0.1" class="line"/><rect x="-0.85" y="-0.60" width="0.5" height="0.1" class="line"/><rect x="-0.28" y="-0.60" width="0.56" height="0.1" class="line"/><rect x="0.62" y="-0.60" width="0.22" height="0.1" class="line"/><rect x="-0.85" y="-0.40" width="0.5" height="0.1" class="line"/><rect x="-0.28" y="-0.40" width="0.72" height="0.1" class="line"/><rect x="0.62" y="-0.40" width="0.22" height="0.1" class="line"/><rect x="-0.85" y="-0.20" width="0.5" height="0.1" class="line"/><rect x="-0.28" y="-0.20" width="0.48" height="0.1" class="line"/><rect x="0.62" y="-0.20" width="0.22" height="0.1" class="line"/><rect x="-0.85" y="0.00" width="0.5" height="0.1" class="fill-sig"/><rect x="-0.28" y="0.00" width="0.64" height="0.1" class="line"/><rect x="0.62" y="0.00" width="0.22" height="0.1" class="fill-ink"/><rect x="-0.85" y="0.20" width="0.5" height="0.1" class="line"/><rect x="-0.28" y="0.20" width="0.40" height="0.1" class="line"/><rect x="0.62" y="0.20" width="0.22" height="0.1" class="line"/><rect x="-0.85" y="0.40" width="0.5" height="0.1" class="line"/><rect x="-0.28" y="0.40" width="0.56" height="0.1" class="line"/><rect x="0.62" y="0.40" width="0.22" height="0.1" class="line"/><rect x="-0.85" y="0.60" width="0.5" height="0.1" class="line"/><rect x="-0.28" y="0.60" width="0.72" height="0.1" class="line"/><rect x="0.62" y="0.60" width="0.22" height="0.1" class="line"/><rect x="-0.85" y="0.80" width="0.5" height="0.1" class="line"/><rect x="-0.28" y="0.80" width="0.48" height="0.1" class="line"/><rect x="0.62" y="0.80" width="0.22" height="0.1" class="line"/></g></g><g class="layer" style="--i:4"><path d="M150 160L150 169L380 284L610 169L610 160M380 275L380 284" class="edge"/><path d="M380 45L610 160L380 275L150 160Z" class="slab" pathLength="1"/><path d="M618 160L698 160" class="leader" aria-hidden="true"/><g transform="matrix(115 57.5 -115 57.5 380 160)" class="art"><rect x="-0.88" y="-0.82" width="0.5" height="1.64" class="line"/><rect x="-0.3" y="-0.82" width="1.18" height="0.84" class="line"/><rect x="-0.3" y="0.1" width="0.56" height="0.72" class="line"/><rect x="0.34" y="0.1" width="0.54" height="0.72" class="line"/><path d="M-0.22 -0.2L-0.05 -0.5L0.18 -0.28L0.4 -0.62L0.62 -0.4L0.8 -0.7" class="line signal"/><path d="M-0.8 -0.66L-0.46 -0.66" class="line fine"/><path d="M-0.8 -0.46L-0.46 -0.46" class="line fine"/><path d="M-0.8 -0.26L-0.46 -0.26" class="line fine"/><path d="M-0.8 -0.06L-0.46 -0.06" class="line fine"/></g></g><g class="legend"><path d="M720 662L712 662L712 744L720 744" class="br"/><text x="730" y="686"><tspan class="num">[01]</tspan><tspan class="lab" dx="10">RECORDS</tspan></text><rect x="858.2" y="673" width="73.4" height="17" class="tag"/><text x="865.2" y="685" class="tagt">REAL DATA</text><text x="730" y="708" class="itm">→ Synthetic loan records</text><text x="730" y="730" class="itm">→ Rainfall and prices</text></g><g class="legend"><path d="M720 527L712 527L712 609L720 609" class="br"/><text x="730" y="551"><tspan class="num">[02]</tspan><tspan class="lab" dx="10">CHECKS</tspan></text><text x="730" y="573" class="itm">→ Every record validated on entry</text></g><g class="legend"><path d="M720 392L712 392L712 474L720 474" class="br"/><text x="730" y="416"><tspan class="num">[03]</tspan><tspan class="lab" dx="10">MODEL</tspan></text><text x="730" y="438" class="itm">→ Members, farms, loans, one meaning</text></g><g class="legend"><path d="M720 257L712 257L712 339L720 339" class="br"/><text x="730" y="281"><tspan class="num">[04]</tspan><tspan class="lab" dx="10">ASSISTANT</tspan></text><text x="730" y="303" class="itm">→ Proposes; cites every figure</text></g><g class="legend"><path d="M720 122L712 122L712 204L720 204" class="br"/><text x="730" y="146"><tspan class="num">[05]</tspan><tspan class="lab" dx="10">OFFICER</tspan></text><rect x="858.2" y="133" width="73.4" height="17" class="tag"/><text x="865.2" y="145" class="tagt">BY DESIGN</text><text x="730" y="168" class="itm">→ A person approves</text><text x="730" y="190" class="itm">→ Each approval is recorded</text></g><g aria-hidden="true"><path d="M118 705C14 600 14 280 118 172" class="arrow-line" pathLength="1"/><path d="M118 172L103 177.6M118 172L114.2 187.6" class="arrow-head"/><path d="M118 705C14 600 14 280 118 172" class="arrow-run" pathLength="1"/></g></svg></div><div class="m"><svg xmlns="http://www.w3.org/2000/svg" class="stack" viewBox="0 0 700 840" role="img" aria-labelledby="sm-t sm-d"><title id="sm-t">Exploded isometric diagram of the Northwind Ledger layers, bottom to top, with a signal rising through them.</title><desc id="sm-d">Exploded isometric diagram of the Northwind Ledger layers, bottom to top, with a signal rising through them.</desc><style>.layer{--stroke:var(--ink,#ecebe6);--soft:rgba(236,235,230,.62);--sigc:var(--sig,#9db7cf);animation:rise 1s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--i)*130ms)}
+.slab{fill:var(--ground,#0e1116);stroke:var(--stroke);stroke-width:1.2;stroke-linejoin:round;stroke-dasharray:1;animation:draw 1.4s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--i)*130ms)}
+.edge{fill:none;stroke:var(--stroke);stroke-width:1.2;stroke-linejoin:round}
+.line{fill:none;stroke:var(--soft);stroke-width:1;vector-effect:non-scaling-stroke}.fine{stroke-width:.6}.dash{stroke-dasharray:3 4}
+.signal{stroke:var(--sigc);stroke-width:1.6}
+.solid{fill:var(--ground,#0e1116);stroke:var(--stroke);stroke-width:1;stroke-linejoin:round}
+.fill-sig{fill:var(--sigc);stroke:none}.fill-ink{fill:var(--stroke);stroke:none}
+.node{fill:var(--ground,#0e1116);stroke:var(--stroke);vector-effect:non-scaling-stroke}
+.hub{fill:none;stroke:var(--sigc);stroke-dasharray:3 3;vector-effect:non-scaling-stroke}
+.art{animation:fade 1.2s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--i)*130ms + 500ms)}
+.leader{fill:none;stroke:var(--ink-3,rgba(236,235,230,.34));stroke-width:1;stroke-dasharray:2 4}
+.arrow-line,.arrow-run{fill:none;stroke-width:2.4;stroke-linecap:round}
+.arrow-line{stroke:rgba(157,183,207,.55);stroke-dasharray:1;animation:draw 2s cubic-bezier(.16,1,.3,1) .4s both}
+.arrow-head{fill:none;stroke:var(--sig,#9db7cf);stroke-width:2.4;stroke-linecap:round;animation:fade .6s ease 2s both}
+.arrow-run{stroke:var(--ink,#ecebe6);stroke-dasharray:.05 .95;animation:run 5.5s linear 2.4s infinite}
+.br{fill:none;stroke:var(--ink-3,rgba(236,235,230,.34));stroke-width:1}
+.num{font:500 13px ui-monospace,Menlo,monospace;fill:var(--ink-2,rgba(236,235,230,.68));letter-spacing:.06em}
+.lab{font:500 14px var(--fde-sans,system-ui,sans-serif);fill:var(--ink,#ecebe6);letter-spacing:.14em}
+.itm{font:400 15px var(--fde-sans,system-ui,sans-serif);fill:var(--ink-2,rgba(236,235,230,.68))}
+.tag{fill:none;stroke:var(--rule,rgba(236,235,230,.4));stroke-width:1}
+.tagt{font:500 11px ui-monospace,Menlo,monospace;fill:var(--ink-2,rgba(236,235,230,.68));letter-spacing:.08em}
+@keyframes rise{from{opacity:0;transform:translateY(-22px)}}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes fade{from{opacity:0}}
+@keyframes run{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@media (prefers-reduced-motion:reduce){.layer,.slab,.art,.arrow-line,.arrow-head,.arrow-run{animation:none!important}.arrow-run{display:none}}</style><g class="layer" style="--i:0"><path d="M150 700L150 709L380 824L610 709L610 700M380 815L380 824" class="edge"/><path d="M380 585L610 700L380 815L150 700Z" class="slab" pathLength="1"/><g class="art"><path d="M366.2 612.6L377.5 619.1L377.5 632.1L366.2 638.6L354.9 632.1L354.9 619.1ZM354.9 619.1L366.2 625.6L377.5 619.1M366.2 625.6L366.2 638.6" class="solid"/><path d="M419.7 640.4A8.6 4.2 0 1 0 436.9 640.4A8.6 4.2 0 1 0 419.7 640.4ZM419.7 640.4L419.7 656.9A8.6 4.2 0 0 0 436.9 656.9L436.9 640.4" class="solid"/><path d="M302.4 646.1A8.6 4.2 0 1 0 319.6 646.1A8.6 4.2 0 1 0 302.4 646.1ZM302.4 646.1L302.4 662.6A8.6 4.2 0 0 0 319.6 662.6L319.6 646.1" class="solid"/><path d="M366.2 661.6L374.9 666.6L374.9 676.6L366.2 681.6L357.5 676.6L357.5 666.6ZM357.5 666.6L366.2 671.6L374.9 666.6M366.2 671.6L366.2 681.6" class="solid"/><path d="M476.6 663.9L485.3 668.9L485.3 678.9L476.6 683.9L467.9 678.9L467.9 668.9ZM467.9 668.9L476.6 673.9L485.3 668.9M476.6 673.9L476.6 683.9" class="solid"/><path d="M274.2 675.4L282.9 680.4L282.9 690.4L274.2 695.4L265.5 690.4L265.5 680.4ZM265.5 680.4L274.2 685.4L282.9 680.4M274.2 685.4L274.2 695.4" class="solid"/><path d="M409.9 689.6L421.2 696.1L421.2 709.1L409.9 715.6L398.6 709.1L398.6 696.1ZM398.6 696.1L409.9 702.6L421.2 696.1M409.9 702.6L409.9 715.6" class="solid"/><path d="M334 693.1L345.3 699.6L345.3 712.6L334 719.1L322.7 712.6L322.7 699.6ZM322.7 699.6L334 706.1L345.3 699.6M334 706.1L334 719.1" class="solid"/><path d="M490.4 697.7L501.7 704.2L501.7 717.2L490.4 723.7L479.1 717.2L479.1 704.2ZM479.1 704.2L490.4 710.7L501.7 704.2M490.4 710.7L490.4 723.7" class="solid"/><path d="M304.1 718L312.8 723L312.8 733L304.1 738L295.4 733L295.4 723ZM295.4 723L304.1 728L312.8 723M304.1 728L304.1 738" class="solid"/><path d="M417.4 735.8A8.6 4.2 0 1 0 434.6 735.8A8.6 4.2 0 1 0 417.4 735.8ZM417.4 735.8L417.4 752.3A8.6 4.2 0 0 0 434.6 752.3L434.6 735.8" class="solid"/><path d="M357.6 738.1A8.6 4.2 0 1 0 374.8 738.1A8.6 4.2 0 1 0 357.6 738.1ZM357.6 738.1L357.6 754.6A8.6 4.2 0 0 0 374.8 754.6L374.8 738.1" class="solid"/></g></g><g class="layer" style="--i:1"><path d="M150 565L150 574L380 689L610 574L610 565M380 680L380 689" class="edge"/><path d="M380 450L610 565L380 680L150 565Z" class="slab" pathLength="1"/><g transform="matrix(115 57.5 -115 57.5 380 565)" class="art"><path d="M-1.000 -1L-1.000 1M-1 -1.000L1 -1.000M-0.857 -1L-0.857 1M-1 -0.857L1 -0.857M-0.714 -1L-0.714 1M-1 -0.714L1 -0.714M-0.571 -1L-0.571 1M-1 -0.571L1 -0.571M-0.429 -1L-0.429 1M-1 -0.429L1 -0.429M-0.286 -1L-0.286 1M-1 -0.286L1 -0.286M-0.143 -1L-0.143 1M-1 -0.143L1 -0.143M0.000 -1L0.000 1M-1 0.000L1 0.000M0.143 -1L0.143 1M-1 0.143L1 0.143M0.286 -1L0.286 1M-1 0.286L1 0.286M0.429 -1L0.429 1M-1 0.429L1 0.429M0.571 -1L0.571 1M-1 0.571L1 0.571M0.714 -1L0.714 1M-1 0.714L1 0.714M0.857 -1L0.857 1M-1 0.857L1 0.857M1.000 -1L1.000 1M-1 1.000L1 1.000" class="line fine"/><rect x="-0.571" y="-0.286" width="0.143" height="0.143" class="fill-sig"/><rect x="-0.429" y="-0.286" width="0.143" height="0.143" class="fill-sig"/><rect x="-0.429" y="-0.143" width="0.143" height="0.143" class="fill-sig"/><rect x="-0.286" y="0.000" width="0.143" height="0.143" class="fill-sig"/><rect x="-0.143" y="0.000" width="0.143" height="0.143" class="fill-sig"/><rect x="-0.143" y="0.143" width="0.143" height="0.143" class="fill-sig"/><rect x="0.000" y="0.286" width="0.143" height="0.143" class="fill-sig"/><rect x="0.143" y="0.286" width="0.143" height="0.143" class="fill-sig"/><rect x="0.429" y="-0.571" width="0.143" height="0.143" class="line dash"/><path d="M-1 0.12L1 0.12" class="line dash"/></g></g><g class="layer" style="--i:2"><path d="M150 430L150 439L380 554L610 439L610 430M380 545L380 554" class="edge"/><path d="M380 315L610 430L380 545L150 430Z" class="slab" pathLength="1"/><g transform="matrix(115 57.5 -115 57.5 380 430)" class="art"><path d="M-0.7 -0.35L-0.35 -0.7" class="line"/><path d="M-0.7 -0.35L-0.4 0.1" class="line"/><path d="M-0.35 -0.7L0.05 -0.3" class="line"/><path d="M-0.4 0.1L0.05 -0.3" class="line"/><path d="M0.05 -0.3L0.1 0.45" class="line"/><path d="M0.05 -0.3L0.5 -0.1" class="line"/><path d="M0.1 0.45L0.62 0.55" class="line"/><path d="M0.5 -0.1L0.62 0.55" class="line"/><path d="M-0.4 0.1L-0.15 0.7" class="line"/><path d="M0.1 0.45L-0.15 0.7" class="line"/><path d="M0.5 -0.1L0.55 -0.62" class="line"/><path d="M-0.35 -0.7L0.55 -0.62" class="line"/><circle cx="-0.7" cy="-0.35" r="0.07" class="node"/><circle cx="-0.35" cy="-0.7" r="0.07" class="node"/><circle cx="-0.4" cy="0.1" r="0.07" class="node"/><circle cx="0.05" cy="-0.3" r="0.13" class="hub"/><circle cx="0.1" cy="0.45" r="0.07" class="node"/><circle cx="0.5" cy="-0.1" r="0.07" class="node"/><circle cx="0.62" cy="0.55" r="0.07" class="node"/><circle cx="-0.15" cy="0.7" r="0.07" class="node"/><circle cx="0.55" cy="-0.62" r="0.07" class="node"/></g></g><g class="layer" style="--i:3"><path d="M150 295L150 304L380 419L610 304L610 295M380 410L380 419" class="edge"/><path d="M380 180L610 295L380 410L150 295Z" class="slab" pathLength="1"/><g transform="matrix(115 57.5 -115 57.5 380 295)" class="art"><rect x="-0.85" y="-0.80" width="0.5" height="0.1" class="line"/><rect x="-0.28" y="-0.80" width="0.40" height="0.1" class="line"/><rect x="0.62" y="-0.80" width="0.22" height="0.1" class="line"/><rect x="-0.85" y="-0.60" width="0.5" height="0.1" class="line"/><rect x="-0.28" y="-0.60" width="0.56" height="0.1" class="line"/><rect x="0.62" y="-0.60" width="0.22" height="0.1" class="line"/><rect x="-0.85" y="-0.40" width="0.5" height="0.1" class="line"/><rect x="-0.28" y="-0.40" width="0.72" height="0.1" class="line"/><rect x="0.62" y="-0.40" width="0.22" height="0.1" class="line"/><rect x="-0.85" y="-0.20" width="0.5" height="0.1" class="line"/><rect x="-0.28" y="-0.20" width="0.48" height="0.1" class="line"/><rect x="0.62" y="-0.20" width="0.22" height="0.1" class="line"/><rect x="-0.85" y="0.00" width="0.5" height="0.1" class="fill-sig"/><rect x="-0.28" y="0.00" width="0.64" height="0.1" class="line"/><rect x="0.62" y="0.00" width="0.22" height="0.1" class="fill-ink"/><rect x="-0.85" y="0.20" width="0.5" height="0.1" class="line"/><rect x="-0.28" y="0.20" width="0.40" height="0.1" class="line"/><rect x="0.62" y="0.20" width="0.22" height="0.1" class="line"/><rect x="-0.85" y="0.40" width="0.5" height="0.1" class="line"/><rect x="-0.28" y="0.40" width="0.56" height="0.1" class="line"/><rect x="0.62" y="0.40" width="0.22" height="0.1" class="line"/><rect x="-0.85" y="0.60" width="0.5" height="0.1" class="line"/><rect x="-0.28" y="0.60" width="0.72" height="0.1" class="line"/><rect x="0.62" y="0.60" width="0.22" height="0.1" class="line"/><rect x="-0.85" y="0.80" width="0.5" height="0.1" class="line"/><rect x="-0.28" y="0.80" width="0.48" height="0.1" class="line"/><rect x="0.62" y="0.80" width="0.22" height="0.1" class="line"/></g></g><g class="layer" style="--i:4"><path d="M150 160L150 169L380 284L610 169L610 160M380 275L380 284" class="edge"/><path d="M380 45L610 160L380 275L150 160Z" class="slab" pathLength="1"/><g transform="matrix(115 57.5 -115 57.5 380 160)" class="art"><rect x="-0.88" y="-0.82" width="0.5" height="1.64" class="line"/><rect x="-0.3" y="-0.82" width="1.18" height="0.84" class="line"/><rect x="-0.3" y="0.1" width="0.56" height="0.72" class="line"/><rect x="0.34" y="0.1" width="0.54" height="0.72" class="line"/><path d="M-0.22 -0.2L-0.05 -0.5L0.18 -0.28L0.4 -0.62L0.62 -0.4L0.8 -0.7" class="line signal"/><path d="M-0.8 -0.66L-0.46 -0.66" class="line fine"/><path d="M-0.8 -0.46L-0.46 -0.46" class="line fine"/><path d="M-0.8 -0.26L-0.46 -0.26" class="line fine"/><path d="M-0.8 -0.06L-0.46 -0.06" class="line fine"/></g></g><g aria-hidden="true"><path d="M118 705C14 600 14 280 118 172" class="arrow-line" pathLength="1"/><path d="M118 172L103 177.6M118 172L114.2 187.6" class="arrow-head"/><path d="M118 705C14 600 14 280 118 172" class="arrow-run" pathLength="1"/></g></svg><ol class="fde-legend-list" aria-label="Layers, top to bottom"><li><span class="n">[05]</span><b>Officer</b><span>→ A person approves</span><span>→ Each approval is recorded</span></li><li><span class="n">[04]</span><b>Assistant</b><span>→ Proposes; cites every figure</span></li><li><span class="n">[03]</span><b>Model</b><span>→ Members, farms, loans, one meaning</span></li><li><span class="n">[02]</span><b>Checks</b><span>→ Every record validated on entry</span></li><li><span class="n">[01]</span><b>Records</b><span>→ Synthetic loan records</span><span>→ Rainfall and prices</span></li></ol></div></div>
+</section>
+<section id="case" class="fde-sec"><div class="fde-two"><div><p class="fde-label">The problem</p><h3>Decisions nobody could explain</h3><p>Credit decisions lived in spreadsheets and phone calls. When a loan was questioned months later, nobody could say what the officer had seen.</p></div>
+<div><p class="fde-label">The response</p><h3>A copilot that shows its evidence</h3><p>The assistant proposes a decision and lists the records behind each figure. An officer decides. The decision and its evidence are stored together.</p></div></div></section>
+<section class="fde-sec" aria-labelledby="cap"><h2 id="cap" class="fde-h2">What it can do</h2><div class="fde-frames"><figure class="fde-frame"><div class="fde-bar"><span class="fde-label">01</span><span class="fde-label">Evidence beside every figure</span></div><div class="body"><h3>Evidence beside every figure</h3><p>Each number in an answer links to the record and rule that produced it.</p></div><!-- add the interactive figure here, drawing from a data file whose header names its source --><figcaption class="fde-mono">origin: Prototype run, example scenario set</figcaption></figure><figure class="fde-frame"><div class="fde-bar"><span class="fde-label">02</span><span class="fde-label">A second pair of eyes</span></div><div class="body"><h3>A second pair of eyes</h3><p>Large loans need two officers; the assistant has no approve action.</p></div><!-- add the interactive figure here, drawing from a data file whose header names its source --><figcaption class="fde-mono">origin: Prototype design</figcaption></figure></div></section>
+<section class="fde-sec" aria-labelledby="plat"><h2 id="plat" class="fde-h2">How it runs</h2><p class="fde-run">The services that carry each step, strongest first.</p><ul class="fde-svc"><li data-first><b>Service A</b><span>Stores and queries the records</span></li><li><b>Service B</b><span>Hosts the assistant</span></li></ul></section>
+<section class="fde-sec" aria-labelledby="res"><h2 id="res" class="fde-h2">Sample figures, and what was not measured</h2><p class="fde-run fde-mono">Example run, 2026-01-01</p><p class="fde-sample fde-mono">Figures tagged SAMPLE are placeholders, not measured results.</p>
+<table class="fde-ledger"><thead><tr><th>#</th><th>Result</th><th>Value</th><th>Source</th><th>Tag</th></tr></thead><tbody><tr class=""><td class="id fde-mono">R1</td><td class="lbl">Median time to a drafted decision<span class="cap">Over the scenario set.</span></td><td class="val fde-mono">12 s</td><td class="src fde-mono">example-run-01 · as of 2026-01-01</td><td><span class="fde-tag fde-mono">SAMPLE</span></td></tr><tr class=""><td class="id fde-mono">R2</td><td class="lbl">Decisions matched to their evidence<span class="cap">Sampled decisions.</span></td><td class="val fde-mono">90%<div class="fde-track" aria-hidden="true"><i style="width:90%"></i></div></td><td class="src fde-mono">example-run-01 · as of 2026-01-01</td><td><span class="fde-tag fde-mono">SAMPLE</span></td></tr></tbody><tbody><tr class="grp"><th colspan="5" class="fde-miss-h">Misses and gaps</th></tr><tr class="gap"><td class="id fde-mono">M1</td><td class="lbl">Live pilot with a co-op<span class="cap">No real members have used it.</span></td><td class="val fde-mono">None yet</td><td class="src fde-mono">no run yet</td><td><span class="fde-tag fde-mono" data-gap>NOT MEASURED</span></td></tr></tbody></table></section>
+<section class="fde-sec fde-close"><h2 class="fde-h2">See it work</h2><a class="fde-cta" href="#">Open the live prototype</a><p class="credit">Built for Example Hackathon</p></section>
+</main>
+<footer class="fde-foot"><span>The co-op and its members are fictional. The loan records are synthetic; the rainfall series is real public data. This is a hackathon prototype, not a production system.</span><a href="#h">Back to top</a></footer></div></body></html>
