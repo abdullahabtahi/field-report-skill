@@ -6,9 +6,9 @@ A [Claude Code](https://claude.com/claude-code) skill that turns a project (buil
 
 The look is deliberately locked. Consistency across several case studies is the point: only the content, the hero object, the story and the generated assets change per project. Version 0.1, experimental (see [How well does it work](#how-well-does-it-work)).
 
-![The same brief built with the skill and without it, side by side](docs/img/compare-tern.png)
+![A new page built with the skill, next to the EIOS landing page it was learned from](docs/img/compare-origin.png)
 
-*Same brief, built twice. Both pages are dark and careful. The one on the left holds the house palette, type and legend grammar and was built with the page generator below; the one on the right was built from the same words with no skill.*
+*Right: the EIOS landing page, the first case study and the source of this design system. Left: a new page for a made-up project, generated with the skill. Same palette, type, legend grammar and exploded-stack hero; different content and layers.*
 
 ## The process
 
@@ -90,7 +90,9 @@ Or just ask Claude for a case-study landing page in this style. The example abov
 
 Two made-up briefs, each built with and without the skill and scored by an objective grader: **20/20 vs 17/20** and **23/23 vs 18/23**.
 
-![The first brief, built with and without the skill](docs/img/compare-ferryline.png)
+![Tern, built with and without the skill](docs/img/compare-tern.png)
+
+![Ferryline, built with and without the skill](docs/img/compare-ferryline.png)
 
 The skill's gain is fidelity to the design system and to the honesty rules, plus a page generator that cut the second build's time. A no-skill run is not weak and can build richer interaction. An independent finish review of a with-skill page found six real issues, whose causes are fixed in the generator and rules. Full results, grader changes and limits are in [`evals/RESULTS.md`](evals/RESULTS.md).
 

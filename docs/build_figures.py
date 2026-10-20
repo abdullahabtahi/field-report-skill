@@ -57,6 +57,10 @@ def figure(title: str, note: str, body: str) -> str:
 
 SIG = "#9db7cf"
 FIGS = {
+    "compare-origin": figure("One design system, two projects", "a new page from the generator, and the page it was learned from", '<div class="row">'
+        + panel("A new page", "built with the skill · Northwind Ledger (fictional)", "hero.png", 1100, SIG)
+        + '<div class="gap"><span>←</span></div>'
+        + panel("The original", "EIOS landing page · the first case study", "eios-hero.png", 1100, SIG) + "</div>"),
     "compare-tern": figure("Same brief, built twice", "Tern, a made-up shorebird-monitoring tool", '<div class="row">'
         + panel("With the skill", "23 / 23 checks · 269 s", "tern-with.png", 1100, SIG)
         + '<div class="gap"><span>VS</span></div>'
